@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels: 
+    app: thesis-app
+    tier: backend
+spec:
+  selector:
+    matchLabels:
+      app: thesis-app
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: thesis-app
+        tier: backend
+    spec:
+      hostname: backend
+      containers:
+        - image: mattedamo26/first-attempt-backend 
+          name: backend
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+
