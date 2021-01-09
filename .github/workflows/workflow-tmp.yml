@@ -29,6 +29,7 @@ jobs:
             token: ${{secrets.TOKEN_GITHUB_DISPATCHER}}
             ref: ${{ github.event.inputs.code-branch}}
             path: code-repo
+      - run: ls
       - run: cp code-repo/file.yaml ./file.yaml
       
       - name: Setup Python
