@@ -67,28 +67,4 @@ jobs:
         uses: ad-m/github-push-action@master
         with: 
           github_token: ${{ secrets.GITHUB_TOKEN }}
-             
-  delete-file:
-    name: Delete file.yaml from the code repo
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code repo
-        uses: actions/checkout@v2
-        with:
-            repository: mattedamo/thesis-app-backend-code
-            token: ${{secrets.TOKEN_GITHUB_DISPATCHER}}
-            ref: ${{ github.event.inputs.code-branch}}
-      - name: delete file.yaml
-        run: rm -rf file.yaml
-      - name: Commit files
-        run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Action"
-          git commit -am "file.yaml deleted"
-       
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with: 
-          github_token: ${{ secrets.TOKEN_GITHUB_DISPATCHER }}
-          branch: ${{ github.event.inputs.code-branch}}
-
+           
