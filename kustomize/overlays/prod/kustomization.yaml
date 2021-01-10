@@ -5,7 +5,7 @@ images:
   newTag: latest
 - name: frontend
   newName: mattedamo26/first-attempt-backend
-  newTag: 7887c16e1d43f48a0e87b2d0089db9c79e72e0ef
+  newTag: 28bc4c801dea46ef46773df99bf6498a454aa095
 kind: Kustomization
 namespace: first-attempt-prod
 patches:
