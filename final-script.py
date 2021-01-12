@@ -149,6 +149,7 @@ def main():
         raise Exception("missing ns")
     else:
         ns_path = "kustomize/overlays/"+input['ns']+"/"
+        os.environ["KUSTOMIZE_DIR"] = input['ns'] 
         input.pop('ns')
 
     be = None
