@@ -49,50 +49,54 @@ def patch_kustomization(dir_path, key, value, kind_name, tier, kind_type):
     with open(kustomize_path) as file:
             kustomization = yaml.load(file, Loader=yaml.FullLoader)
     
+    entry = {"target": {"name" : kind_name, "labelSelector" : "tier="+tier}, "path" : patch_file_name}
+
     if "patches" not in kustomization.keys():
-        entry = [{"target": {"name" : kind_name, "labelSelector" : "tier="+tier}, "path" : patch_file_name}]
-        kustomization["patches"] = entry
+        kustomization["patches"] = [entry]
         #aggiungo scrivendo, la key patch
         with open(kustomize_path, "w") as file:
             yaml.dump(kustomization, file)
     else:
         #vuol dire che la entry patch esiste, ma non è detto che esista nella sua lista, il list_value necessario
-        
         found = False #inizializzo la variabile
-        for entry in kustomization["patches"]:
-            if entry["path"] == patch_file_name:
+        for e in kustomization["patches"]:
+            if e["path"] == patch_file_name:
                 found = True
-            if found == False:
-                entry = [{"target": {"name" : kind_name, "labelSelector" : "tier="+tier}, "path" : patch_file_name}]
-                kustomization["patches"] = entry
-                with open(kustomize_path, "w") as file:
-                    yaml.dump(kustomization, file)
+                kustomization["patches"].remove(e)
+                kustomization["patches"].append(entry)
+                break
+        if found == False:
+            kustomization["patches"].append(entry)
+        with open(kustomize_path, "w") as file:
+            yaml.dump(kustomization, file)
     
     #adesso devo aggiungere il file patch.yaml, se non esiste
     found = False
     for filename in os.listdir(dir_path):
         if filename == patch_file_name:
             found = True
+            break
     if(found == False):
-        open(patch_file_name, "x")
+        open(dir_path+patch_file_name, "x")
         patch = []
     else:
-        with open(dir_path+tier+"_"+kind_name+"_patch.yaml") as file:
+        with open(dir_path+patch_file_name) as file:
             patch = yaml.load(file, Loader=yaml.FullLoader)
 
     if(key == "replicas"):
         if(patch != None):
+            found = False
             for ele in patch:
-                found = False
                 if(ele["path"] == "/spec/replicas"):
                     ele["value"] = value
                     found = True
+                    break
             if(found == False):
                 patch.append(dict({"op" : "add", "path" : "/spec/replicas", "value" : value}))
         else:
             patch = [{"op" : "add", "path" : "/spec/replicas", "value" : value}]
         
-        with open(patch_file_name, "w") as file:
+        with open(dir_path+patch_file_name, "w") as file:
             yaml.dump(patch, file)
     elif(key == "port"):
         if(patch != None):
@@ -101,28 +105,30 @@ def patch_kustomization(dir_path, key, value, kind_name, tier, kind_type):
                 if(ele["path"] == "/spec/ports/0/port"):
                     ele["value"] = value
                     found = True
+                    break
             if(found == False):
                 patch.append(dict({"op" : "add", "path" : "/spec/ports/0/port", "value" : value}))
         else:
             patch = [{"op" : "add", "path" : "/spec/ports/0/port", "value" : value}]
         
-        with open(patch_file_name, "w") as file:
+        with open(dir_path+patch_file_name, "w") as file:
             yaml.dump(patch, file)
     elif(key == "secrets"):
-        value = secret_generator(value, kustomize_path, tier, kind_name)
+        new_value = secret_generator(value, kustomize_path, tier, kind_name)
 
         if(patch != None):
             for ele in patch:
                 found = False
                 if(ele["path"] == "/spec/template/spec/containers/0/env"):
-                    ele["value"] = value
+                    ele["value"] = new_value
                     found = True
+                    break
             if(found == False):
-                patch.append(dict({"op" : "add", "path" : "/spec/template/spec/containers/0/env", "value" : value}))
+                patch.append(dict({"op" : "add", "path" : "/spec/template/spec/containers/0/env", "value" : new_value}))
         else:
-            patch = [{"op" : "add", "path" : "/spec/template/spec/containers/0/env", "value" : value}]
+            patch = [{"op" : "add", "path" : "/spec/template/spec/containers/0/env", "value" : new_value}]
         
-        with open(patch_file_name, "w") as file:
+        with open(dir_path+patch_file_name, "w") as file:
             yaml.dump(patch, file)
     
 
@@ -133,21 +139,22 @@ def secret_generator(secrets, kustomization_path, tier, kind_name):
             kustomization = yaml.load(file, Loader=yaml.FullLoader)
     if "secretGenerator" in kustomization.keys():
         kustomization.pop("secretGenerator", None)
-        literals = []
-        for ele in secrets:
-            literals.append(ele)
-        kustomization["secretGenerator"] = [{"name" : tier+"-"+kind_name , "literals" : literals}]
-        with open(kustomization_path) as file:
-            yaml.dump(kustomization, file)
-        
-        valueToReturn = {}
-        valueToReturn["value"] = []
 
-        for val in secrets:
-            for x,y in val.items():
-                valueToReturn["value"].append({"name": x, "valuefrom": { "secretKeyRef": { "name" : tier+"-"+kind_name , "key" : x}}})
-            
+    literals = []
+    for ele in secrets:
+        for x,y in ele.items():
+            literals.append(x+"="+y)
+    kustomization["secretGenerator"] = [{"name" : tier+"-"+kind_name , "literals" : literals}]
+    with open(kustomization_path, "w") as file:
+        yaml.dump(kustomization, file)
         
+    
+    valueToReturn = []
+
+    for val in secrets:
+        for x,y in val.items():
+            valueToReturn.append({"name": x, "valuefrom": { "secretKeyRef": { "name" : tier+"-"+kind_name , "key" : x}}})
+    return valueToReturn
 
 
     
@@ -186,11 +193,11 @@ def main():
     if fe != None:
         kind_name = getMetadataName("frontend")
         #Update vales
-        yaml_updates(be, dir_path, kind_name, "frontend")
+        yaml_updates(fe, dir_path, kind_name, "frontend")
     if db != None:
         kind_name = getMetadataName("db")
         #Update vales
-        yaml_updates(be, dir_path, kind_name, "db")
+        yaml_updates(db, dir_path, kind_name, "db")
     
 
 if __name__ == '__main__':
