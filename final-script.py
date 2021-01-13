@@ -143,10 +143,9 @@ def main():
   
     with open("./file.yaml") as file:
         input = yaml.load(file, Loader=yaml.FullLoader)
-    #prima controllo quale è il namespace e lo rimuovo siccome non mi serve più
 
     if "ns" not in input:
-        raise Exception("missing ns")
+        raise Exception("Missing ns")
     else:
         ns_path = "kustomize/overlays/"+input['ns']+"/"
         os.environ["KUSTOMIZE_DIR"] = input['ns'] 
