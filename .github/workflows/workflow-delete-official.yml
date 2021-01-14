@@ -1,4 +1,4 @@
-name: Delete kustomize dir
+name: Delete-kustomize-dir
 
 on: 
   workflow_dispatch:
@@ -8,8 +8,8 @@ on:
         required: true
 
 jobs:
-  setup:
-    name: Setup
+  delete:
+    name: Delete
     runs-on: ubuntu-latest
     
     steps:
@@ -30,7 +30,6 @@ jobs:
      
       - run: python delete-overlays-dir-official.py
         name: Delete dir from kustomize overlays
-    
 
       - name: Add and commit changes
         uses: EndBug/add-and-commit@v6
