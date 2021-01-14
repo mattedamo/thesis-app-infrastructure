@@ -1,4 +1,4 @@
-name: Update-infrastructure
+name: update-infrastructure
 on: 
   workflow_dispatch:
     inputs:
