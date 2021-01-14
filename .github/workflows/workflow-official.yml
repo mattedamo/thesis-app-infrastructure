@@ -48,6 +48,7 @@ jobs:
       - run: python final-script-official.py
         name: Run python script, update kustomize overlays
       - run: python update-docker-img-official.py
+        name: Run update docker image
       
       - run: rm -f file.yaml
       - run: rm -rf code-repo/
