@@ -43,14 +43,18 @@ jobs:
 
       - run: pip install PyYAML
         name: Install py dependencies
+        
       - name: Create kustomize overlays dir, if necessary
         run: python kustomize-dir-official.py
+        
       - run: python final-script-official.py
         name: Run python script, update kustomize overlays
+        
       - run: python update-docker-img-official.py
         name: Run update docker image
       
       - run: rm -f file.yaml
+        
       - run: rm -rf code-repo/
 
       - name: Add and commit changes
