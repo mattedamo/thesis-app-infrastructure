@@ -45,22 +45,11 @@ jobs:
       - run: pip install PyYAML
         name: Install py dependencies
       - name: Create kustomize overlays dir, if necessary
-        run: python kustomize-dir.py
-      - run: python final-script.py
+        run: python kustomize-dir-official.py
+      - run: python final-script-official.py
         name: Run python script, update kustomize overlays
+      - run: python update-docker-img-official.py
       
-      - name: Setup Kustomize
-        uses: imranismail/setup-kustomize@v1
-        with: 
-          kustomize-version: "3.6.1"
-     
-      - name: Update Kubernetes Image
-        env: 
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        run: |
-          cd kustomize/overlays/${{ github.event.inputs.kustomize-dir}}
-          kustomize edit set image frontend=$DOCKER_USERNAME/first-attempt-backend:${{ github.event.inputs.sha-tag }}-
-          
       - run: rm -f file.yaml
       - run: rm -rf code-repo/
 

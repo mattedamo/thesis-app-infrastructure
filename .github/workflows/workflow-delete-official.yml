@@ -20,7 +20,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
     
-      
       - name: Setup Python
         uses: actions/setup-python@v2
         with: 
@@ -29,7 +28,7 @@ jobs:
       - run: pip install PyYAML
         name: Install py dependencies
      
-      - run: python delete-overlays-dir.py
+      - run: python delete-overlays-dir-official.py
         name: Delete dir from kustomize overlays
     
 
