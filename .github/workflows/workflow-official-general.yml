@@ -19,6 +19,7 @@ jobs:
     
     steps:
       - name: Set env vars
+        run: echo "setting env vars"
         env:
           DOCKER_IMAGE: ${{ github.event.inputs.docker-image}}
           CODE_BRANCH:  ${{ github.event.inputs.code-branch}}
