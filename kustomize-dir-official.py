@@ -17,7 +17,7 @@ def create_kustomization(branch, list_branch, folder):
           yaml.dump(k, file)
 
 def main():
-  branch = os.environ("CODE_BRANCH")
+  branch = os.environ["CODE_BRANCH"]
   list_branch = branch.split("/")
   overlays = "kustomize/overlays/"
   if(len(list_branch) == 1 and branch == "master"):
