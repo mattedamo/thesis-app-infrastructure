@@ -5,9 +5,9 @@ def main():
   
 
   if "master" in os.environ["CODE_BRANCH"]:
-    kustomization_path = "kustomize/overlays/prod/"
+    kustomization_path = "kustomize/overlays/prod/kustomization.yaml"
   else: 
-    kustomization_path = "kustomize/overlays/"+os.environ["CODE_BRANCH"]
+    kustomization_path = "kustomize/overlays/"+os.environ["CODE_BRANCH"]+"/kustomization.yaml"
   user_dockerhub = os.environ["DOCKER_IMAGE"].split("/")[0]
   repo_name_dockerhub = os.environ["DOCKER_IMAGE"].split(":")[0].split("/")[1]
   image_tag = os.environ["DOCKER_IMAGE"].split(":")[1]
