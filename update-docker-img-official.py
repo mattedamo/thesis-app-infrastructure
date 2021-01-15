@@ -42,11 +42,11 @@ def main():
     for e in kustomization["images"]:
         if e["name"] == imageName:
           found = True
-          kustomization["patches"].remove(e)
-          kustomization["patches"].append(entry)
+          kustomization["images"].remove(e)
+          kustomization["images"].append(entry)
           break
     if found == False:
-        kustomization["patches"].append(entry)
+        kustomization["images"].append(entry)
     with open(kustomization_path, "w") as file:
         yaml.dump(kustomization, file)
   
