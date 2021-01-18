@@ -1,16 +1,26 @@
-name: update-infrastructure
+name: update-infrastructure-backend
 on: 
   workflow_dispatch:
     inputs:
-      docker-image:
-        description: 'this is the docker-image to pull from DockerHub, username/repo:tag'     
+      docker-image-tag:
+        description: 'this is the docker tag build in the code workflow'     
         required: true
       code-branch:
-        description: 'branch of code repository'
+        description: 'branch of code repo'
         required: true
       repo-name: 
-        description: ' name of code repo'
+        description: 'name of code repo'
         required: true
+      tier: 
+        description: 'the tier of the code repo'
+        required: true
+      docker-frontend-repo:
+        description: 'the repo name on dockerhub for the frontend image'
+        required: true
+      docker-backend-repo:
+        description: 'the repo name on dockerhub for the backend image'
+        required: true
+      
 
 jobs:
   setup:
@@ -22,9 +32,13 @@ jobs:
       - name: set environment variables
         uses: allenevans/set-env@v2.0.0
         with:
-          DOCKER_IMAGE: ${{ github.event.inputs.docker-image}}
+          DOCKER_TAG: ${{ github.event.inputs.docker-image-tag}}
           CODE_BRANCH:  ${{ github.event.inputs.code-branch}}
           CODE_REPO_NAME: ${{ github.event.inputs.repo-name}}
+          TIER: ${{ github.event.inputs.tier}}
+          DOCKER_BACKEND_REPO: ${{ github.event.inputs.docker-backend-repo}}
+          DOCKER_FRONTEND_REPO: ${{ github.event.inputs.docker-frontend-repo}}
+          DOCKER_USER: ${{secrets.DOCKER_USERNAME}}
       #- name: Set env vars
       #  run: echo "setting env vars"
       #  env:

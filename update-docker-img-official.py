@@ -2,55 +2,81 @@ import yaml, os
 
 def main():
   
+  tier = os.environ["TIER"]
+  code_branch = os.environ["CODE_BRANCH"]
+  user_dockerhub = os.environ["DOCKER_USER"]
   
+  repo_name_frontend_dockerhub = os.environ["DOCKER_REPO_FRONTEND"]
+  repo_name_backend_dockerhub = os.environ["DOCKER_REPO_BACKEND"]
+  image_tag = os.environ["DOCKER_TAG"]
 
-  if "master" in os.environ["CODE_BRANCH"]:
+  if "master" in code_branch:
     kustomization_path = "kustomize/overlays/prod/kustomization.yaml"
   else: 
-    kustomization_path = "kustomize/overlays/"+os.environ["CODE_BRANCH"]+"/kustomization.yaml"
-  user_dockerhub = os.environ["DOCKER_IMAGE"].split("/")[0]
-  repo_name_dockerhub = os.environ["DOCKER_IMAGE"].split(":")[0].split("/")[1]
-  image_tag = os.environ["DOCKER_IMAGE"].split(":")[1]
-  if "backend" or "be" in os.environ["CODE_REPO_NAME"]:
-    tier = "backend"
-  elif "frontend" or "fe" in os.environ["CODE_REPO_NAME"]:
-    tier = "frontend"
-  else:
-    raise Exception("code repo tier not recognize")
-  
-  for filename in os.listdir("kustomize/base/"):
-        with open(os.path.join("kustomize/base/", filename)) as file:
-            input = yaml.load(file, Loader=yaml.FullLoader)
-        if input["kind"] == "Deployment":
-            if input["spec"]["template"]["metadata"]["labels"]["tier"] == tier:
-                imageName = input["spec"]["template"]["spec"]["containers"][0]["name"]
-                break
+    kustomization_path = "kustomize/overlays/"+tier+"/"+code_branch+"/kustomization.yaml"
 
+  for filename in os.listdir("kustomize/base/"):
+          with open(os.path.join("kustomize/base/", filename)) as file:
+              input = yaml.load(file, Loader=yaml.FullLoader)
+          if input["kind"] == "Deployment":
+              if input["spec"]["template"]["metadata"]["labels"]["tier"] == "frontend":
+                imageNameFrontend = input["spec"]["template"]["spec"]["containers"][0]["name"]
+              elif input["spec"]["template"]["metadata"]["labels"]["tier"] == "backend":
+                imageNameBackend = input["spec"]["template"]["spec"]["containers"][0]["name"]
   with open(kustomization_path) as file:
-    kustomization = yaml.load(file, Loader=yaml.FullLoader)
-  
-  entry = {"name" : imageName, "newName" : user_dockerhub+"/"+repo_name_dockerhub, "newTag" : image_tag}
+      kustomization = yaml.load(file, Loader=yaml.FullLoader)
+
+  if(tier == "backend"):
+    entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : image_tag}
+    imageTagFrontend = None
+    with open("./file.yaml") as file:
+      input = yaml.load(file, Loader=yaml.FullLoader)
+    for k,v in input.items():
+      if k == "image":
+        imageTagFrontend = input["image"]["frontend"]["tag"]
+    if imageTagFrontend == None:
+      imageTagFrontend = "latest-prod"
+    entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : imageTagFrontend}
+
+
+  elif (tier == "frontend"):
+    entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : image_tag}
+    imageTagBackend = None
+    with open("./file.yaml") as file:
+      input = yaml.load(file, Loader=yaml.FullLoader)
+    for k,v in input.items():
+      if k == "image":
+        imageTagBackend = input["image"]["backend"]["tag"]
+    if imageTagBackend == None:
+      imageTagBackend = "latest-prod"
+    entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : imageTagBackend}
 
   if "images" not in kustomization.keys():
-    kustomization["images"] = [entry]
+    kustomization["images"] = [entryBackend, entryFrontend]
     #aggiungo scrivendo, la key patch
     with open(kustomization_path, "w") as file:
         yaml.dump(kustomization, file)
   else:
     #vuol dire che la entry patch esiste, ma non è detto che esista nella sua lista, il list_value necessario
-    found = False #inizializzo la variabile
+    foundBackend = False #inizializzo la variabile
+    foundFrontend = False #inizializzo la variabile
     for e in kustomization["images"]:
-        if e["name"] == imageName:
-          found = True
+        if e["name"] == imageNameFrontend:
+          foundFrontend = True
           kustomization["images"].remove(e)
-          kustomization["images"].append(entry)
-          break
-    if found == False:
-        kustomization["images"].append(entry)
+          kustomization["images"].append(entryFrontend)
+        elif e["name"] == imageNameBackend:
+          foundBackend = True
+          kustomization["images"].remove(e)
+          kustomization["images"].append(entryBackend)
+
+    if foundBackend == False:
+        kustomization["images"].append(entryBackend)
+    if foundFrontend == False:
+        kustomization["images"].append(entryFrontend)
+
     with open(kustomization_path, "w") as file:
         yaml.dump(kustomization, file)
-  
-
       
 if __name__ == '__main__':
     main()

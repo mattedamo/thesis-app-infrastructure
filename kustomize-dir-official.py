@@ -1,8 +1,7 @@
 import yaml, os
-def create_kustomization(branch, list_branch, folder):
+def create_kustomization(branch, list_branch, folder, tier):
   k = {}
   k["kind"] = "Kustomization"
-  k["namespace"] = "thesis-app-"+branch
   k["apiVersion"] = "kustomize.config.k8s.io/v1beta1"
   if branch == "master":
     k["resources"] = ["../../base"]
@@ -11,29 +10,30 @@ def create_kustomization(branch, list_branch, folder):
     with open(folder+"/kustomization.yaml", "w") as file:
         yaml.dump(k, file)
   else: 
-    k["resources"] = ["../../../base"]
-    k["namespace"] = "thesis-app-"+list_branch[0]+"-"+list_branch[1]
+    k["resources"] = ["../../../../base"]
+    k["namespace"] = "thesis-app-"+tier+"-"+list_branch[0]+"-"+list_branch[1]
     with open(folder+list_branch[-1]+"/kustomization.yaml", "w") as file:
           yaml.dump(k, file)
 
 def main():
   branch = os.environ["CODE_BRANCH"]
+  tier = os.environ["TIER"]
   list_branch = branch.split("/")
-  overlays = "kustomize/overlays/"
   if(len(list_branch) == 1 and branch == "master"):
-    folder = "kustomize/overlays/prod/"
-    if "prod" not in os.listdir(overlays):
+    folder = "kustomize/overlays/prod"
+    if "prod" not in os.listdir("kustomize/overlays"):
       #create path
       os.mkdir(folder)
       #create kustomization.yaml
-      create_kustomization(branch, list_branch, folder)
+      create_kustomization(branch, list_branch, folder, tier)
     else:
       if("kustomization.yaml" not in os.listdir(folder)):
         #create kustomization.yaml
-        create_kustomization(branch, list_branch, folder)
+        create_kustomization(branch, list_branch, folder, tier)
   else:
+    overlays = "kustomize/overlays/"+tier+"/"
     if(len(list_branch) == 2 and "features" == list_branch[0] and len(list_branch[1].strip())>0):
-      folder = "kustomize/overlays/features/"
+      folder = overlays+"features/"
       if "features" not in os.listdir(overlays):
         #create path
         os.makedirs(overlays+branch)
@@ -42,7 +42,7 @@ def main():
         os.mkdir(folder+list_branch[1])
         
     elif(len(list_branch) == 2 and "releases" == list_branch[0]and len(list_branch[1].strip())>0):
-      folder = "kustomize/overlays/releases/"
+      folder = overlays+ "releases/"
       if "releases" not in os.listdir(overlays):
         #create path
         os.makedirs(overlays+branch)
@@ -54,7 +54,7 @@ def main():
 
     if("kustomization.yaml" not in os.listdir(folder+list_branch[1])):
         #create kustomization.yaml
-        create_kustomization(branch, list_branch, folder)
+        create_kustomization(branch, list_branch, folder, tier)
 
       
 if __name__ == '__main__':
