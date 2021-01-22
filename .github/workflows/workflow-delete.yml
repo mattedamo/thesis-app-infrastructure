@@ -1,4 +1,4 @@
-name: Delete kustomize dir
+name: delete-kustomize-dir
 
 on: 
   workflow_dispatch:
@@ -28,7 +28,7 @@ jobs:
       - run: pip install PyYAML
         name: Install py dependencies
      
-      - run: python delete-overlays-dir-official.py
+      - run: python delete-overlays-dir.py
         name: Delete dir from kustomize overlays
     
 

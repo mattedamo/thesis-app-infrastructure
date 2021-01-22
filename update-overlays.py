@@ -147,7 +147,6 @@ def secret_generator(secrets, kustomization_path, tier, kind_name):
     kustomization["secretGenerator"] = [{"name" : tier+"-"+kind_name , "literals" : literals}]
     with open(kustomization_path, "w") as file:
         yaml.dump(kustomization, file)
-        
     
     valueToReturn = []
 
@@ -157,22 +156,19 @@ def secret_generator(secrets, kustomization_path, tier, kind_name):
     return valueToReturn
 
 
-    
-    
-    
-    
-    
 
 def main():
   
-    with open("./file.yaml") as file:
+    with open("./input.yaml") as file:
         input = yaml.load(file, Loader=yaml.FullLoader)
-
-    if "ns" not in input:
-        raise Exception("Missing ns")
+    
+    tier = os.environ["TIER"]
+    
+    if(input['branch'] == "master"):
+        dir_path = "kustomize/overlays/prod/"
     else:
-        dir_path = "kustomize/overlays/"+input['ns']+"/"
-        input.pop('ns')
+        dir_path = "kustomize/overlays/"+tier+"/"+input['branch']+"/"
+    input.pop('ns')
 
     be = None
     fe = None

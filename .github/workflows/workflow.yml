@@ -1,4 +1,4 @@
-name: update-infrastructure-backend
+name: update-infrastructure
 on: 
   workflow_dispatch:
     inputs:
@@ -23,8 +23,8 @@ on:
       
 
 jobs:
-  setup:
-    name: Setup
+  update-values:
+    name: Update kustomize
     runs-on: ubuntu-latest
     
     steps:
@@ -39,12 +39,6 @@ jobs:
           DOCKER_BACKEND_REPO: ${{ github.event.inputs.docker-backend-repo}}
           DOCKER_FRONTEND_REPO: ${{ github.event.inputs.docker-frontend-repo}}
           DOCKER_USER: ${{secrets.DOCKER_USERNAME}}
-      #- name: Set env vars
-      #  run: echo "setting env vars"
-      #  env:
-      #    DOCKER_IMAGE: ${{ github.event.inputs.docker-image}}
-      #    CODE_BRANCH:  ${{ github.event.inputs.code-branch}}
-      #    CODE_REPO_NAME: ${{ github.event.inputs.repo-name}} 
 
       - name: Check out code
         uses: actions/checkout@v2
@@ -56,7 +50,7 @@ jobs:
             token: ${{secrets.TOKEN_GITHUB_DISPATCHER}}
             ref: ${{ github.event.inputs.code-branch}}
             path: code-repo
-      - run: cp code-repo/file.yaml ./file.yaml
+      - run: cp code-repo/input.yaml ./input.yaml
       
       - name: Setup Python
         uses: actions/setup-python@v2
@@ -67,15 +61,15 @@ jobs:
         name: Install py dependencies
         
       - name: Create kustomize overlays dir, if necessary
-        run: python kustomize-dir-official.py
+        run: python overlays-dir-creation.py
         
-      - run: python final-script-official.py
+      - run: python update-overlays.py
         name: Run python script, update kustomize overlays
         
-      - run: python update-docker-img-official.py
+      - run: python update-docker-img.py
         name: Run update docker image
       
-      - run: rm -f file.yaml
+      - run: rm -f input.yaml
         
       - run: rm -rf code-repo/
 
@@ -83,3 +77,19 @@ jobs:
         uses: EndBug/add-and-commit@v6
         with:
           message: 'updated kustomize files'
+  
+  trigger-workflow:
+    name: Trigger workflow in ArgoCD repo
+    runs-on: ubuntu-latest
+    needs: update-values
+    steps:
+      
+      - name: Trigger infrastructure repo workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: create-manifest
+          ref: master
+          inputs: '{"docker-image-tag" : "{{ github.sha }}-${{steps.extract_branch.outputs.branch}}", "code-branch" : "${{steps.extract_branch.outputs.branch}}", "repo-name" : "${{ github.event.repository.name }}", "docker-frontend-repo" : "${{secrets.DOCKER_FRONTEND_REPO}},"docker-backend-repo" : "${{secrets.DOCKER_BACKEND_REPO}}", "tier" : "${{secrets.TIER}}"}'
+          repo: mattedamo/thesis-argocd
+          token: ${{ secrets.TOKEN_GITHUB_DISPATCHER }}
+

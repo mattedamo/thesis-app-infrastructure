@@ -20,7 +20,7 @@ def main():
   tier = os.environ["TIER"]
   list_branch = branch.split("/")
   if(len(list_branch) == 1 and branch == "master"):
-    folder = "kustomize/overlays/prod"
+    folder = "kustomize/overlays/prod/"
     if "prod" not in os.listdir("kustomize/overlays"):
       #create path
       os.mkdir(folder)
