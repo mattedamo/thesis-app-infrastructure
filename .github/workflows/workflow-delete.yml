@@ -6,6 +6,9 @@ on:
       code-branch:
         description: 'branch of code repository that has been deleted'
         required: true
+      tier:
+        description: 'it can be frontend or backend'
+        required: true
 
 jobs:
   setup:
@@ -16,6 +19,7 @@ jobs:
       - name: Set env vars
         env:
           CODE_BRANCH:  ${{ github.event.inputs.code-branch}}
+          TIER: ${{ github.event.inputs.tier}}
 
       - name: Check out code
         uses: actions/checkout@v2
