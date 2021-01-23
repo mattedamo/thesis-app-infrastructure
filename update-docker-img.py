@@ -6,8 +6,8 @@ def main():
   code_branch = os.environ["CODE_BRANCH"]
   user_dockerhub = os.environ["DOCKER_USER"]
   
-  repo_name_frontend_dockerhub = os.environ["DOCKER_REPO_FRONTEND"]
-  repo_name_backend_dockerhub = os.environ["DOCKER_REPO_BACKEND"]
+  repo_name_frontend_dockerhub = os.environ["DOCKER_FRONTEND_REPO"]
+  repo_name_backend_dockerhub = os.environ["DOCKER_BACKEND_REPO"]
   image_tag = os.environ["DOCKER_TAG"]
 
   if "master" in code_branch:
