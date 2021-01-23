@@ -168,7 +168,7 @@ def main():
         dir_path = "kustomize/overlays/prod/"
     else:
         dir_path = "kustomize/overlays/"+tier+"/"+input['branch']+"/"
-    input.pop('ns')
+    input.pop('branch')
 
     be = None
     fe = None
