@@ -21,6 +21,12 @@ jobs:
           CODE_BRANCH:  ${{ github.event.inputs.code-branch }}
           TIER: ${{ github.event.inputs.tier }}
           APP_NAME: ${{ secrets.APP_NAME }}
+      - name: set environment variables
+        uses: allenevans/set-env@v2.0.0
+        with:
+          CODE_BRANCH:  ${{ github.event.inputs.code-branch}}
+          TIER: ${{ github.event.inputs.tier}}
+          APP_NAME: ${{secrets.APP_NAME}}
 
       - name: Check out code
         uses: actions/checkout@v2
