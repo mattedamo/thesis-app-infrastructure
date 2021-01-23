@@ -1,23 +1,24 @@
 import yaml, os
-def create_kustomization(branch, list_branch, folder, tier):
+def create_kustomization(branch, list_branch, folder, tier, app_name):
   k = {}
   k["kind"] = "Kustomization"
   k["apiVersion"] = "kustomize.config.k8s.io/v1beta1"
   if branch == "master":
     k["resources"] = ["../../base"]
-    k["namespace"] = "thesis-app-prod"
+    k["namespace"] = app_name+"-prod"
 
     with open(folder+"/kustomization.yaml", "w") as file:
         yaml.dump(k, file)
   else: 
     k["resources"] = ["../../../../base"]
-    k["namespace"] = "thesis-app-"+tier+"-"+list_branch[0]+"-"+list_branch[1]
+    k["namespace"] = app_name+"-"+tier+"-"+list_branch[0]+"-"+list_branch[1]
     with open(folder+list_branch[-1]+"/kustomization.yaml", "w") as file:
           yaml.dump(k, file)
 
 def main():
   branch = os.environ["CODE_BRANCH"]
   tier = os.environ["TIER"]
+  app_name = os.environ["APP_NAME"]
   list_branch = branch.split("/")
   if(len(list_branch) == 1 and branch == "master"):
     folder = "kustomize/overlays/prod/"
@@ -25,11 +26,11 @@ def main():
       #create path
       os.mkdir(folder)
       #create kustomization.yaml
-      create_kustomization(branch, list_branch, folder, tier)
+      create_kustomization(branch, list_branch, folder, tier, app_name)
     else:
       if("kustomization.yaml" not in os.listdir(folder)):
         #create kustomization.yaml
-        create_kustomization(branch, list_branch, folder, tier)
+        create_kustomization(branch, list_branch, folder, tier, app_name)
   else:
     overlays = "kustomize/overlays/"+tier+"/"
     if(len(list_branch) == 2 and "features" == list_branch[0] and len(list_branch[1].strip())>0):
@@ -54,7 +55,7 @@ def main():
 
     if("kustomization.yaml" not in os.listdir(folder+list_branch[1])):
         #create kustomization.yaml
-        create_kustomization(branch, list_branch, folder, tier)
+        create_kustomization(branch, list_branch, folder, tier, app_name)
 
       
 if __name__ == '__main__':

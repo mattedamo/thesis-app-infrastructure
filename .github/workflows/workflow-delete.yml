@@ -18,8 +18,9 @@ jobs:
     steps:
       - name: Set env vars
         env:
-          CODE_BRANCH:  ${{ github.event.inputs.code-branch}}
-          TIER: ${{ github.event.inputs.tier}}
+          CODE_BRANCH:  ${{ github.event.inputs.code-branch }}
+          TIER: ${{ github.event.inputs.tier }}
+          APP_NAME: ${{ secrets.APP_NAME }}
 
       - name: Check out code
         uses: actions/checkout@v2
@@ -28,9 +29,6 @@ jobs:
         uses: actions/setup-python@v2
         with: 
           python-version: "3.x"
-
-      - run: pip install PyYAML
-        name: Install py dependencies
      
       - run: python delete-overlays-dir.py
         name: Delete dir from kustomize overlays
@@ -40,4 +38,19 @@ jobs:
         uses: EndBug/add-and-commit@v6
         with:
           message: "deleted kustomize dir"
+  
+  trigger-workflow:
+    name: Trigger workflow in ArgoCD repo
+    runs-on: ubuntu-latest
+    needs: update-values
+    steps:
+      
+      - name: Trigger infrastructure repo workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: delete-manifest
+          ref: master
+          inputs: '{"code-branch" : "${{ github.event.inputs.code-branch}}", "tier" : "${{ github.event.inputs.tier}}", "app-name" : "${{secrets.APP_NAME}}"}'
+          repo: mattedamo/thesis-argocd
+          token: ${{ secrets.TOKEN_GITHUB_DISPATCHER }}
            

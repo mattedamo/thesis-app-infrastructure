@@ -8,7 +8,7 @@ on:
       code-branch:
         description: 'branch of code repo'
         required: true
-      repo-name: 
+      code-repo: 
         description: 'name of code repo'
         required: true
       tier: 
@@ -34,11 +34,12 @@ jobs:
         with:
           DOCKER_TAG: ${{ github.event.inputs.docker-image-tag}}
           CODE_BRANCH:  ${{ github.event.inputs.code-branch}}
-          CODE_REPO_NAME: ${{ github.event.inputs.repo-name}}
+          CODE_REPO: ${{ github.event.inputs.code-repo}}
           TIER: ${{ github.event.inputs.tier}}
           DOCKER_BACKEND_REPO: ${{ github.event.inputs.docker-backend-repo}}
           DOCKER_FRONTEND_REPO: ${{ github.event.inputs.docker-frontend-repo}}
           DOCKER_USER: ${{secrets.DOCKER_USERNAME}}
+          APP_NAME: ${{secrets.APP_NAME}}
 
       - name: Check out code
         uses: actions/checkout@v2
@@ -46,7 +47,7 @@ jobs:
       - name: Checkout code repo
         uses: actions/checkout@v2
         with:
-            repository: mattedamo/${{ github.event.inputs.repo-name}}
+            repository: mattedamo/${{ github.event.inputs.code-repo}}
             token: ${{secrets.TOKEN_GITHUB_DISPATCHER}}
             ref: ${{ github.event.inputs.code-branch}}
             path: code-repo
@@ -87,9 +88,9 @@ jobs:
       - name: Trigger infrastructure repo workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: create-manifest
+          workflow: update-manifest
           ref: master
-          inputs: '{"docker-image-tag" : "{{ github.sha }}-${{steps.extract_branch.outputs.branch}}", "code-branch" : "${{steps.extract_branch.outputs.branch}}", "repo-name" : "${{ github.event.repository.name }}", "docker-frontend-repo" : "${{secrets.DOCKER_FRONTEND_REPO}},"docker-backend-repo" : "${{secrets.DOCKER_BACKEND_REPO}}", "tier" : "${{secrets.TIER}}"}'
+          inputs: '{"code-branch" : "${{ github.event.inputs.code-branch}}", "tier" : "${{ github.event.inputs.tier}}", "code-repo" : "${{github.event.inputs.code-repo}}", "app-name" : "${{secrets.APP_NAME}}"}'
           repo: mattedamo/thesis-argocd
           token: ${{ secrets.TOKEN_GITHUB_DISPATCHER }}
 
