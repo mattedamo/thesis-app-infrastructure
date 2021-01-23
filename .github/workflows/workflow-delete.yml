@@ -11,8 +11,8 @@ on:
         required: true
 
 jobs:
-  setup:
-    name: Setup
+  delete:
+    name: Delete Dir
     runs-on: ubuntu-latest
     
     steps:
@@ -44,7 +44,7 @@ jobs:
   trigger-workflow:
     name: Trigger workflow in ArgoCD repo
     runs-on: ubuntu-latest
-    needs: update-values
+    needs: delete
     steps:
       
       - name: Trigger infrastructure repo workflow
