@@ -1,0 +1,16 @@
+- op: add
+  path: /spec/replicas
+  value: 30
+- op: add
+  path: /spec/template/spec/containers/0/env
+  value:
+  - name: MYSQL_ROOT_PASSWORD
+    valuefrom:
+      secretKeyRef:
+        key: MYSQL_ROOT_PASSWORD
+        name: backend-backend
+  - name: MYSQL_DATABASE
+    valuefrom:
+      secretKeyRef:
+        key: MYSQL_DATABASE
+        name: backend-backend
