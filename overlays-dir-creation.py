@@ -1,4 +1,9 @@
 import yaml, os
+def create_basic_struct():
+  os.makedirs("kustomize/overlays/backend")
+  os.makedirs("kustomize/overlays/frontend")
+
+
 def create_kustomization(branch, list_branch, folder, tier, app_name):
   k = {}
   k["kind"] = "Kustomization"
@@ -20,6 +25,9 @@ def main():
   tier = os.environ["TIER"]
   app_name = os.environ["APP_NAME"]
   list_branch = branch.split("/")
+  
+  create_basic_struct()
+
   if(len(list_branch) == 1 and branch == "master"):
     folder = "kustomize/overlays/prod/"
     if "prod" not in os.listdir("kustomize/overlays"):
