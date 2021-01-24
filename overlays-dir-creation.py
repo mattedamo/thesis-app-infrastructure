@@ -1,7 +1,7 @@
 import yaml, os
 def create_basic_struct():
-  os.makedirs("kustomize/overlays/backend")
-  os.makedirs("kustomize/overlays/frontend")
+  os.makedirs("kustomize/overlays/backend", exist_ok=True)
+  os.makedirs("kustomize/overlays/frontend" exist_ok=True)
 
 
 def create_kustomization(branch, list_branch, folder, tier, app_name):
