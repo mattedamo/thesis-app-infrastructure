@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v2
         with:
             repository: mattedamo/${{ github.event.inputs.code-repo}}
-            token: ${{secrets.TOKEN_GITHUB_DISPATCHER}}
+            token: ${{secrets.PAT_TOKEN}}
             ref: ${{ github.event.inputs.code-branch}}
             path: code-repo
       - run: cp code-repo/input.yaml ./input.yaml
@@ -92,5 +92,5 @@ jobs:
           ref: master
           inputs: '{"code-branch" : "${{ github.event.inputs.code-branch}}", "tier" : "${{ github.event.inputs.tier}}", "code-repo" : "${{github.event.inputs.code-repo}}", "app-name" : "${{secrets.APP_NAME}}"}'
           repo: mattedamo/thesis-argocd
-          token: ${{ secrets.TOKEN_GITHUB_DISPATCHER }}
+          token: ${{ secrets.PAT_TOKEN }}
 

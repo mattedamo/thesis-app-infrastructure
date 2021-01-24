@@ -65,22 +65,11 @@ def main():
         yaml.dump(kustomization, file)
   else:
     #vuol dire che la entry patch esiste, ma non è detto che esista nella sua lista, il list_value necessario
-    foundBackend = False #inizializzo la variabile
-    foundFrontend = False #inizializzo la variabile
-    for e in kustomization["images"]:
-        if e["name"] == imageNameFrontend:
-          foundFrontend = True
-          kustomization["images"].remove(e)
-          kustomization["images"].append(entryFrontend)
-        elif e["name"] == imageNameBackend:
-          foundBackend = True
-          kustomization["images"].remove(e)
-          kustomization["images"].append(entryBackend)
-
-    if foundBackend == False:
-        kustomization["images"].append(entryBackend)
-    if foundFrontend == False:
-        kustomization["images"].append(entryFrontend)
+    
+    kustomization["images"].clear()
+    
+    kustomization["images"].append(entryBackend)
+    kustomization["images"].append(entryFrontend)
 
     with open(kustomization_path, "w") as file:
         yaml.dump(kustomization, file)

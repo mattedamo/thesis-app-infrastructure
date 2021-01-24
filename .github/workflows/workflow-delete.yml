@@ -54,5 +54,5 @@ jobs:
           ref: master
           inputs: '{"code-branch" : "${{ github.event.inputs.code-branch}}", "tier" : "${{ github.event.inputs.tier}}", "app-name" : "${{secrets.APP_NAME}}"}'
           repo: mattedamo/thesis-argocd
-          token: ${{ secrets.TOKEN_GITHUB_DISPATCHER }}
+          token: ${{ secrets.PAT_TOKEN }}
            
