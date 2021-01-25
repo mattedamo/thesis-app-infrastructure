@@ -8,5 +8,23 @@ images:
   newTag: custom-tag
 kind: Kustomization
 namespace: thesis-app-backend-features-trilly
+patches:
+- path: backend_backend_service_patch.yaml
+  target:
+    labelSelector: tier=backend
+    name: backend
+- path: backend_backend_deployment_patch.yaml
+  target:
+    labelSelector: tier=backend
+    name: backend
+- path: frontend_frontend_deployment_patch.yaml
+  target:
+    labelSelector: tier=frontend
+    name: frontend
 resources:
 - ../../../../base
+secretGenerator:
+- literals:
+  - MYSQL_ROOT_PASSWORD=password
+  - MYSQL_DATABASE=mybd
+  name: backend-backend
