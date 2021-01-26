@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: db-dep
+  labels:
+    app: thesis-app
+    tier: db
+spec:
+  selector:
+    matchLabels:
+      app: thesis-app
+      tier: db
+  template:
+    metadata:
+      labels:
+        app: thesis-app
+        tier: db
+    spec:
+      containers:
+        - image: mariadb:latest
+          name: mariadb
+          ports:
+            - name: http
+              containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-root-password
+                  key: password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-db-name
+                  key: name
