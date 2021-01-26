@@ -1,4 +1,4 @@
-import yaml, os, shutil
+import yaml, os
 #from yaml_update import yaml_updates
 #from kind_name import getKindName
 
@@ -58,16 +58,25 @@ def patch_kustomization(dir_path, key, value, kind_name, tier, kind_type):
             yaml.dump(kustomization, file)
     else:
         #vuol dire che la entry patch esiste, ma non è detto che esista nella sua lista, il list_value necessario
+        found = False #inizializzo la variabile
         for e in kustomization["patches"]:
             if e["path"] == patch_file_name:
+                found = True
                 kustomization["patches"].remove(e)
+                kustomization["patches"].append(entry)
                 break
-        kustomization["patches"].append(entry)
+        if found == False:
+            kustomization["patches"].append(entry)
         with open(kustomize_path, "w") as file:
             yaml.dump(kustomization, file)
     
     #adesso devo aggiungere il file patch.yaml, se non esiste
-    if patch_file_name not in os.listdir(dir_path):
+    found = False
+    for filename in os.listdir(dir_path):
+        if filename == patch_file_name:
+            found = True
+            break
+    if(found == False):
         open(dir_path+patch_file_name, "x")
         patch = []
     else:
@@ -75,9 +84,7 @@ def patch_kustomization(dir_path, key, value, kind_name, tier, kind_type):
             patch = yaml.load(file, Loader=yaml.FullLoader)
 
     if(key == "replicas"):
-        if(patch == []):
-            patch = [{"op" : "add", "path" : "/spec/replicas", "value" : value}]
-        else:
+        if(patch != None):
             found = False
             for ele in patch:
                 if(ele["path"] == "/spec/replicas"):
@@ -86,12 +93,13 @@ def patch_kustomization(dir_path, key, value, kind_name, tier, kind_type):
                     break
             if(found == False):
                 patch.append(dict({"op" : "add", "path" : "/spec/replicas", "value" : value}))
+        else:
+            patch = [{"op" : "add", "path" : "/spec/replicas", "value" : value}]
+        
         with open(dir_path+patch_file_name, "w") as file:
             yaml.dump(patch, file)
     elif(key == "port"):
-        if(patch == []):
-            patch = [{"op" : "add", "path" : "/spec/ports/0/port", "value" : value}]
-        else:
+        if(patch != None):
             for ele in patch:
                 found = False
                 if(ele["path"] == "/spec/ports/0/port"):
@@ -100,14 +108,15 @@ def patch_kustomization(dir_path, key, value, kind_name, tier, kind_type):
                     break
             if(found == False):
                 patch.append(dict({"op" : "add", "path" : "/spec/ports/0/port", "value" : value}))
+        else:
+            patch = [{"op" : "add", "path" : "/spec/ports/0/port", "value" : value}]
+        
         with open(dir_path+patch_file_name, "w") as file:
             yaml.dump(patch, file)
-
     elif(key == "secrets"):
         new_value = secret_generator(value, kustomize_path, tier, kind_name)
-        if(patch == []):
-            patch = [{"op" : "add", "path" : "/spec/template/spec/containers/0/env", "value" : new_value}]
-        else:
+
+        if(patch != None):
             for ele in patch:
                 found = False
                 if(ele["path"] == "/spec/template/spec/containers/0/env"):
@@ -116,6 +125,9 @@ def patch_kustomization(dir_path, key, value, kind_name, tier, kind_type):
                     break
             if(found == False):
                 patch.append(dict({"op" : "add", "path" : "/spec/template/spec/containers/0/env", "value" : new_value}))
+        else:
+            patch = [{"op" : "add", "path" : "/spec/template/spec/containers/0/env", "value" : new_value}]
+        
         with open(dir_path+patch_file_name, "w") as file:
             yaml.dump(patch, file)
     

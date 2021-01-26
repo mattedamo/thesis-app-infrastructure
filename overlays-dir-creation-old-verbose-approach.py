@@ -1,14 +1,8 @@
-import yaml, os, shutil
+import yaml, os
 def create_basic_struct():
   os.makedirs("kustomize/overlays/backend", exist_ok=True)
   os.makedirs("kustomize/overlays/frontend", exist_ok=True)
 
-def create_specific_struct(val, path, folder):
-  if val in os.listdir(path):
-      #delete path
-      shutil.rmtree(folder, ignore_errors=True)
-  #create path
-  os.makedirs(folder, exist_ok= True)
 
 def create_kustomization(branch, list_branch, folder, tier, app_name):
   k = {}
@@ -36,21 +30,41 @@ def main():
 
   if(len(list_branch) == 1 and branch == "master"):
     folder = "kustomize/overlays/prod/"
-    create_specific_struct("prod", "kustomize/overlays", folder)
+    if "prod" not in os.listdir("kustomize/overlays"):
+      #create path
+      os.mkdir(folder)
+      #create kustomization.yaml
+      create_kustomization(branch, list_branch, folder, tier, app_name)
+    else:
+      if("kustomization.yaml" not in os.listdir(folder)):
+        #create kustomization.yaml
+        create_kustomization(branch, list_branch, folder, tier, app_name)
   else:
     overlays = "kustomize/overlays/"+tier+"/"
     if(len(list_branch) == 2 and "features" == list_branch[0] and len(list_branch[1].strip())>0):
       folder = overlays+"features/"
-      create_specific_struct("features", overlays, folder)
+      if "features" not in os.listdir(overlays):
+        #create path
+        os.makedirs(overlays+branch)
+      elif list_branch[1] not in os.listdir(folder):
+        #create path
+        os.mkdir(folder+list_branch[1])
+        
     elif(len(list_branch) == 2 and "releases" == list_branch[0]and len(list_branch[1].strip())>0):
       folder = overlays+ "releases/"
-      create_specific_struct("releases", overlays, folder)
+      if "releases" not in os.listdir(overlays):
+        #create path
+        os.makedirs(overlays+branch)
+      elif list_branch[0] not in os.listdir(folder):
+        #create path
+        os.mkdir(folder+list_branch[0])
     else:
-      raise Exception("Branch is not correct!")
+      raise Exception("Branch name is not correct!")
 
-  #create kustomization.yaml
-  create_kustomization(branch, list_branch, folder, tier, app_name)
+    if("kustomization.yaml" not in os.listdir(folder+list_branch[1])):
+        #create kustomization.yaml
+        create_kustomization(branch, list_branch, folder, tier, app_name)
 
-
+      
 if __name__ == '__main__':
     main()

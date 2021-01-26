@@ -9,7 +9,7 @@ def main():
       else:
         raise Exception("not existing branch")
       
-      shutil.rmtree("kustomize/overlays/"+endPath)
+      shutil.rmtree("kustomize/overlays/"+endPath, ignore_errors=True)
 
 if __name__ == '__main__':
     main()

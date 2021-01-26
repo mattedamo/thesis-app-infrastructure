@@ -4,8 +4,7 @@ def main():
   
   tier = os.environ["TIER"]
   code_branch = os.environ["CODE_BRANCH"]
-  user_dockerhub = os.environ["DOCKER_USER"]
-  
+  user_dockerhub = os.environ["DOCKER_USER"]  
   repo_name_frontend_dockerhub = os.environ["DOCKER_FRONTEND_REPO"]
   repo_name_backend_dockerhub = os.environ["DOCKER_BACKEND_REPO"]
   image_tag = os.environ["DOCKER_TAG"]
@@ -30,7 +29,6 @@ def main():
     entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : "latest-prod"}
     entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : "latest-prod"}
 
-  
   else:
 
     if(tier == "backend"):
@@ -44,7 +42,6 @@ def main():
       if imageTagFrontend == None:
         imageTagFrontend = "latest-prod"
       entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : imageTagFrontend}
-
 
     elif (tier == "frontend"):
       entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : image_tag}
@@ -64,8 +61,7 @@ def main():
     with open(kustomization_path, "w") as file:
         yaml.dump(kustomization, file)
   else:
-    #vuol dire che la entry patch esiste, ma non è detto che esista nella sua lista, il list_value necessario
-    
+    #faccio overwrite
     kustomization["images"].clear()
     
     kustomization["images"].append(entryBackend)
