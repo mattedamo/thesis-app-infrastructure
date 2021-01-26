@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: mariadb
+  name: db-dep
   labels:
     app: thesis-app
     tier: db
@@ -16,7 +16,6 @@ spec:
         app: thesis-app
         tier: db
     spec:
-      hostname: mariadb
       containers:
         - image: mariadb:latest
           name: mariadb

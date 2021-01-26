@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: frontend-dep
   labels: 
     app: thesis-app
     tier: frontend
@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: "mattedamo26/first-attempt-frontend"
+        image: "mattedamo26/first-attempt-frontend:latest-prod"
         imagePullPolicy: Always        
         ports:
           - containerPort: 80

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: backend-dep
   labels: 
     app: thesis-app
     tier: backend
@@ -16,9 +16,8 @@ spec:
         app: thesis-app
         tier: backend
     spec:
-      hostname: backend
       containers:
-        - image: mattedamo26/first-attempt-backend 
+        - image: mattedamo26/first-attempt-backend:latest-prod 
           name: backend
           imagePullPolicy: Always
           ports:
