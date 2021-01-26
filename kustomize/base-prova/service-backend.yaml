@@ -6,7 +6,6 @@ metadata:
     app: thesis-app
     tier: backend
 spec:
-  type: ClusterIP
   selector:
     app: thesis-app
     tier: backend
