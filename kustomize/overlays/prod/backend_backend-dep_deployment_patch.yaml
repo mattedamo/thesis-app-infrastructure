@@ -8,9 +8,9 @@
     valuefrom:
       secretKeyRef:
         key: MYSQL_ROOT_PASSWORD
-        name: backend-backend
+        name: backend-backend-dep
   - name: MYSQL_DATABASE
     valuefrom:
       secretKeyRef:
         key: MYSQL_DATABASE
-        name: backend-backend
+        name: backend-backend-dep

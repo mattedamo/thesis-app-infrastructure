@@ -9,22 +9,22 @@ images:
 kind: Kustomization
 namespace: thesis-app-prod
 patches:
-- path: backend_backend_service_patch.yaml
+- path: backend_backend-service_service_patch.yaml
   target:
     labelSelector: tier=backend
-    name: backend
-- path: backend_backend_deployment_patch.yaml
+    name: backend-service
+- path: backend_backend-dep_deployment_patch.yaml
   target:
     labelSelector: tier=backend
-    name: backend
-- path: frontend_frontend_deployment_patch.yaml
+    name: backend-dep
+- path: frontend_frontend-dep_deployment_patch.yaml
   target:
     labelSelector: tier=frontend
-    name: frontend
+    name: frontend-dep
 resources:
 - ../../base
 secretGenerator:
 - literals:
   - MYSQL_ROOT_PASSWORD=password
   - MYSQL_DATABASE=mybd
-  name: backend-backend
+  name: backend-backend-dep
