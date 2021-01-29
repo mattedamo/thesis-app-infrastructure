@@ -29,7 +29,7 @@ def main():
   create_basic_struct()
 
   if(len(list_branch) == 1 and branch == "master"):
-    overlays_folder = "kustomize/overlys/"
+    overlays_folder = "kustomize/overlays/"
     final_folder = overlays_folder+"prod/"
     #create_specific_struct("prod", "kustomize/overlays", folder)
     if "prod" in os.listdir(overlays_folder):
