@@ -9,7 +9,6 @@ def create_specific_struct(val, path, folder):
       shutil.rmtree(folder, ignore_errors=True)
   #create path
   os.makedirs(folder, exist_ok= True)
-  open(folder+"/kustomization.yaml", "x")
     
 def create_kustomization(branch, list_branch, folder, tier, app_name):
   k = {}
@@ -18,12 +17,15 @@ def create_kustomization(branch, list_branch, folder, tier, app_name):
   if branch == "master":
     k["resources"] = ["../../base"]
     k["namespace"] = app_name+"-prod"
+    open(folder+"/kustomization.yaml", "x")
 
     with open(folder+"/kustomization.yaml", "w") as file:
         yaml.dump(k, file)
   else: 
     k["resources"] = ["../../../../base"]
     k["namespace"] = app_name+"-"+tier+"-"+list_branch[0]+"-"+list_branch[1]
+    open(folder+list_branch[-1]+"/kustomization.yaml", "x")
+
     with open(folder+list_branch[-1]+"/kustomization.yaml", "w") as file:
           yaml.dump(k, file)
 
