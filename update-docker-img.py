@@ -33,30 +33,28 @@ def main():
 
     if(tier == "backend"):
       entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : image_tag}
-      imageTagFrontend = ""
       with open("./input.yaml") as file:
         input = yaml.load(file, Loader=yaml.FullLoader)
       for k,v in input.items():
         if k == "image":
-          #if "frontend" in input["image"].keys():
-          #  if "tag" in input["image"]["frontend"].keys():
-          imageTagFrontend = input["image"]["frontend"]["tag"]
-      if imageTagFrontend == "":
-        imageTagFrontend = "latest-prod"
+          if "frontend" in input["image"].keys():
+            if "tag" in input["image"]["frontend"].keys():
+              imageTagFrontend = input["image"]["frontend"]["tag"]
+            else:
+              imageTagFrontend = "latest-prod"
       entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : imageTagFrontend}
 
     elif (tier == "frontend"):
       entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : image_tag}
-      imageTagBackend = ""
       with open("./file.yaml") as file:
         input = yaml.load(file, Loader=yaml.FullLoader)
       for k,v in input.items():
         if k == "image":
-          #if "backend" in input["image"].keys():
-          #  if "tag" in input["image"]["backend"].keys()
-          imageTagBackend = input["image"]["backend"]["tag"]
-      if imageTagBackend == "":
-        imageTagBackend = "latest-prod"
+          if "backend" in input["image"].keys():
+            if "tag" in input["image"]["backend"].keys():
+              imageTagBackend = input["image"]["backend"]["tag"]
+            else: 
+              imageNameBackend = "latest-prod"
       entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : imageTagBackend}
 
   if "images" not in kustomization.keys():
