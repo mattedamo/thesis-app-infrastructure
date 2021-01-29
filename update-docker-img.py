@@ -41,7 +41,7 @@ def main():
           if "frontend" in input["image"].keys():
             if "tag" in input["image"]["frontend"].keys():
               imageTagFrontend = input["image"]["frontend"]["tag"]
-      if imageTagFrontend = "":      
+      if imageTagFrontend == "":      
         imageTagFrontend = "latest-prod"
       entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : imageTagFrontend}
 
@@ -55,7 +55,7 @@ def main():
           if "backend" in input["image"].keys():
             if "tag" in input["image"]["backend"].keys():
               imageTagBackend = input["image"]["backend"]["tag"]
-      if imageTagBackend = "":
+      if imageTagBackend == "":
         imageNameBackend = "latest-prod"
       entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : imageTagBackend}
 
