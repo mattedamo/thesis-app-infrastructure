@@ -32,6 +32,7 @@ def main():
   else:
 
     if(tier == "backend"):
+      imageTagFrontend = ""
       entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : image_tag}
       with open("./input.yaml") as file:
         input = yaml.load(file, Loader=yaml.FullLoader)
@@ -40,11 +41,12 @@ def main():
           if "frontend" in input["image"].keys():
             if "tag" in input["image"]["frontend"].keys():
               imageTagFrontend = input["image"]["frontend"]["tag"]
-            else:
-              imageTagFrontend = "latest-prod"
+      if imageTagFrontend = "":      
+        imageTagFrontend = "latest-prod"
       entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : imageTagFrontend}
 
     elif (tier == "frontend"):
+      imageTagBackend = ""
       entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : image_tag}
       with open("./file.yaml") as file:
         input = yaml.load(file, Loader=yaml.FullLoader)
@@ -53,8 +55,8 @@ def main():
           if "backend" in input["image"].keys():
             if "tag" in input["image"]["backend"].keys():
               imageTagBackend = input["image"]["backend"]["tag"]
-            else: 
-              imageNameBackend = "latest-prod"
+      if imageTagBackend = "":
+        imageNameBackend = "latest-prod"
       entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : imageTagBackend}
 
   if "images" not in kustomization.keys():
