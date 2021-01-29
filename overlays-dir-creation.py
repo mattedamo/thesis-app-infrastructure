@@ -1,9 +1,11 @@
 import yaml, os, shutil
 def create_basic_struct():
-  os.makedirs("kustomize/overlays/backend", exist_ok=True)
-  os.makedirs("kustomize/overlays/frontend", exist_ok=True)
+  os.makedirs("kustomize/overlays/backend/releases/", exist_ok=True)
+  os.makedirs("kustomize/overlays/backend/features/", exist_ok=True)
+  os.makedirs("kustomize/overlays/frontend/releases/", exist_ok=True)
+  os.makedirs("kustomize/overlays/frontend/features/", exist_ok=True)
 
-def create_specific_struct(val, path, folder):
+def create_specific_struct(folder_name, path, folder):
   if val in os.listdir(path):
       #delete path
       shutil.rmtree(folder, ignore_errors=True)
@@ -39,15 +41,31 @@ def main():
 
   if(len(list_branch) == 1 and branch == "master"):
     folder = "kustomize/overlays/prod/"
-    create_specific_struct("prod", "kustomize/overlays", folder)
+    #create_specific_struct("prod", "kustomize/overlays", folder)
+    if "prod" in os.listdir("kustomize/overlays"):
+      #delete path
+      shutil.rmtree(folder, ignore_errors=True)
+    #create path
+    os.makedirs(folder, exist_ok= True)
+      
   else:
     overlays = "kustomize/overlays/"+tier+"/"
     if(len(list_branch) == 2 and "features" == list_branch[0] and len(list_branch[1].strip())>0):
       folder = overlays+"features/"
-      create_specific_struct("features", overlays, folder)
+      #create_specific_struct(list_branch[-1], overlays, folder, list_branch[-1])
+      if list_branch[-1] in os.listdir(folder):
+        #delete path
+        shutil.rmtree(folder, ignore_errors=True)
+      #create path
+      os.makedirs(folder+"/"+list_branch[-1]+"/", exist_ok= True)
     elif(len(list_branch) == 2 and "releases" == list_branch[0] and len(list_branch[1].strip())>0):
       folder = overlays+ "releases/"
-      create_specific_struct("releases", overlays, folder)
+      #create_specific_struct(list_branc[-1], overlays, folder, list_branch[-1])
+      if list_branch[-1] in os.listdir(folder):
+        #delete path
+        shutil.rmtree(folder, ignore_errors=True)
+      #create path
+      os.makedirs(folder+"/"+list_branch[-1]+"/", exist_ok= True)
     else:
       raise Exception("Branch is not correct!")
 
