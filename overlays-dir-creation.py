@@ -9,7 +9,8 @@ def create_specific_struct(val, path, folder):
       shutil.rmtree(folder, ignore_errors=True)
   #create path
   os.makedirs(folder, exist_ok= True)
-
+  open(folder+"/kustomization.yaml", "x")
+    
 def create_kustomization(branch, list_branch, folder, tier, app_name):
   k = {}
   k["kind"] = "Kustomization"
@@ -42,7 +43,7 @@ def main():
     if(len(list_branch) == 2 and "features" == list_branch[0] and len(list_branch[1].strip())>0):
       folder = overlays+"features/"
       create_specific_struct("features", overlays, folder)
-    elif(len(list_branch) == 2 and "releases" == list_branch[0]and len(list_branch[1].strip())>0):
+    elif(len(list_branch) == 2 and "releases" == list_branch[0] and len(list_branch[1].strip())>0):
       folder = overlays+ "releases/"
       create_specific_struct("releases", overlays, folder)
     else:
