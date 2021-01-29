@@ -33,13 +33,15 @@ def main():
 
     if(tier == "backend"):
       entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : image_tag}
+      imageTagFrontend = ""
       with open("./input.yaml") as file:
         input = yaml.load(file, Loader=yaml.FullLoader)
       for k,v in input.items():
         if k == "image":
           if "frontend" in input["image"].keys():
-            imageTagFrontend = input["image"]["frontend"]["tag"]
-      if imageTagFrontend == None:
+            if "tag" in input["image"]["frontend"].keys():
+              imageTagFrontend = input["image"]["frontend"]["tag"]
+      if imageTagFrontend == "":
         imageTagFrontend = "latest-prod"
       entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : imageTagFrontend}
 
@@ -51,7 +53,8 @@ def main():
       for k,v in input.items():
         if k == "image":
           if "backend" in input["image"].keys():
-            imageTagBackend = input["image"]["backend"]["tag"]
+            if "tag" in input["image"]["backend"].keys()
+              imageTagBackend = input["image"]["backend"]["tag"]
       if imageTagBackend == "":
         imageTagBackend = "latest-prod"
       entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : imageTagBackend}
