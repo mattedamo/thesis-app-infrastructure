@@ -53,6 +53,6 @@ jobs:
           workflow: delete-manifest
           ref: master
           inputs: '{"code-branch" : "${{ github.event.inputs.code-branch}}", "tier" : "${{ github.event.inputs.tier}}", "app-name" : "${{secrets.APP_NAME}}"}'
-          repo: mattedamo/thesis-argocd
+          repo: ${{ github.repository_owner }}/${{ secrets.ARGOCD_REPO }}
           token: ${{ secrets.PAT_TOKEN }}
            

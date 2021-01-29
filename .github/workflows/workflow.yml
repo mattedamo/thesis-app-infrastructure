@@ -47,7 +47,7 @@ jobs:
       - name: Checkout code repo
         uses: actions/checkout@v2
         with:
-            repository: mattedamo/${{ github.event.inputs.code-repo}}
+            repository: ${{ github.repository_owner }}/${{ github.event.inputs.code-repo}}
             token: ${{secrets.PAT_TOKEN}}
             ref: ${{ github.event.inputs.code-branch}}
             path: code-repo
@@ -91,6 +91,6 @@ jobs:
           workflow: update-manifest
           ref: master
           inputs: '{"code-branch" : "${{ github.event.inputs.code-branch}}", "tier" : "${{ github.event.inputs.tier}}", "code-repo" : "${{github.event.inputs.code-repo}}", "app-name" : "${{secrets.APP_NAME}}"}'
-          repo: mattedamo/thesis-argocd
+          repo: ${{ github.repository_owner }}/${{ secrets.ARGOCD_REPO }}
           token: ${{ secrets.PAT_TOKEN }}
 
