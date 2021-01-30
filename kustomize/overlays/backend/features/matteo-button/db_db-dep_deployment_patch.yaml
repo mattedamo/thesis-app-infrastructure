@@ -2,7 +2,7 @@
   path: /spec/template/spec/containers/0/env
   value:
   - name: MYSQL_ROOT_PASSWORD
-    valuefrom:
+    valueFrom:
       secretKeyRef:
         key: MYSQL_ROOT_PASSWORD
         name: db-db-dep
