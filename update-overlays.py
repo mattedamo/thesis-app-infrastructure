@@ -140,7 +140,7 @@ def secret_generator(secrets, kustomization_path, tier, kind_name):
 
     for val in secrets:
         for x,y in val.items():
-            valueToReturn.append({"name": x, "valuefrom": { "secretKeyRef": { "name" : tier+"-"+kind_name , "key" : x}}})
+            valueToReturn.append({"name": x, "valueFrom": { "secretKeyRef": { "name" : tier+"-"+kind_name , "key" : x}}})
     return valueToReturn
 
 
