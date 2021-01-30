@@ -34,5 +34,5 @@ resources:
 secretGenerator:
 - literals:
   - MYSQL_ROOT_PASSWORD=password
-  - MYSQL_DATABASE=mybd
+  - MYSQL_DATABASE=thesisAppMariadb
   name: db-db-dep
