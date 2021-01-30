@@ -51,7 +51,7 @@ def main():
       os.makedirs(final_folder, exist_ok= True)
     elif(len(list_branch) == 2 and "releases" == list_branch[0] and len(list_branch[1].strip())>0):
       releases_folder = overlays_folder+ "releases/"
-      final_folder = features_folder+list_branch[-1]+"/"
+      final_folder = releases_folder+list_branch[-1]+"/"
       #create_specific_struct(list_branc[-1], overlays, folder, list_branch[-1])
       if list_branch[-1] in os.listdir(releases_folder):
         #delete path
