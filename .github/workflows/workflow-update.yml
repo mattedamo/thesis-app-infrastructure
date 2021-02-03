@@ -61,9 +61,9 @@ jobs:
 
       - name: Create outputs from config file
         run: |
-          echo "##[set-output name=app-name;]$(python create-outputs-from-config.py app-name)"
-          echo "##[set-output name=argocd-repo;]$(python create-outputs-from-config.py argocd-repo)"
-          echo "##[set-output name=prod_input_master;]$(python create-outputs-from-config.py prod-input-master)"
+          echo "##[set-output name=app-name;]$(python scripts/create-outputs-from-config.py app-name)"
+          echo "##[set-output name=argocd-repo;]$(python scripts/create-outputs-from-config.py argocd-repo)"
+          echo "##[set-output name=prod_input_master;]$(python scripts/create-outputs-from-config.py prod-input-master)"
         id: from-config
         
       - name: set environment variables
@@ -113,15 +113,15 @@ jobs:
       
       - name: Set the correct branch name in input.yaml
         if: github.event.inputs.default-input-flag == 'true'
-        run: python update-branch-name.py
+        run: python scripts/update-branch-name.py
 
       - name: Create kustomize overlays dir, if necessary
-        run: python overlays-dir-creation.py
+        run: python scripts/overlays-dir-creation.py
         
-      - run: python update-overlays.py
+      - run: python scripts/update-overlays.py
         name: Run python script, update kustomize overlays
         
-      - run: python update-docker-img.py
+      - run: python scripts/update-docker-img.py
         name: Run update docker image
       
       - run: rm -f input.yaml
