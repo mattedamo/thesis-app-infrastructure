@@ -1,0 +1,3 @@
+app-name: thesis-app
+argocd-repo: thesis-argocd
+prod_input_master: backend
