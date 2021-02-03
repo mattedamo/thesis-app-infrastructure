@@ -16,43 +16,56 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-     
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check existence of config.yaml 
+        id: check_file
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "config.yaml"
+      - name: Files don't exist
+        if: steps.check_file.outputs.files_exists == 'false'
+        run: |
+          echo "failed"
+          exit 1
+      
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with: 
+          python-version: "3.x"
+      
+      - run: pip install PyYAML
+        name: Install py dependencies
+
+      - name: Create outputs from config file
+        run: |
+          echo "##[set-output name=app-name;]$(python create-outputs-from-config.py app-name)"
+          echo "##[set-output name=argocd-repo;]$(python create-outputs-from-config.py argocd-repo)"
+        id: from-config
+        
       - name: set environment variables
         uses: allenevans/set-env@v2.0.0
         with:
           CODE_BRANCH:  ${{ github.event.inputs.code-branch}}
           TIER: ${{ github.event.inputs.tier}}
-          APP_NAME: ${{secrets.APP_NAME}}
-
-      - name: Check out code
-        uses: actions/checkout@v2
     
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with: 
-          python-version: "3.x"
-     
       - run: python delete-overlays-dir.py
-        name: Delete dir from kustomize overlays
-    
+        name: Delete dir from kustomize overlays 
 
       - name: Add and commit changes
         uses: EndBug/add-and-commit@v6
         with:
           message: "deleted kustomize dir"
   
-  trigger-workflow:
-    name: Trigger workflow in ArgoCD repo
-    runs-on: ubuntu-latest
-    needs: delete
-    steps:
-      
+ 
       - name: Trigger infrastructure repo workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: delete-manifest
           ref: master
-          inputs: '{"code-branch" : "${{ github.event.inputs.code-branch}}", "tier" : "${{ github.event.inputs.tier}}", "app-name" : "${{secrets.APP_NAME}}"}'
-          repo: ${{ github.repository_owner }}/${{ secrets.ARGOCD_REPO }}
+          inputs: '{"code-branch" : "${{ github.event.inputs.code-branch}}", "tier" : "${{ github.event.inputs.tier}}", "app-name" : "${{steps.from-config.outputs.app-name}}"}'
+          repo: ${{ github.repository_owner }}/${{ steps.from-config.outputs.argocd-repo }}
           token: ${{ secrets.PAT_TOKEN }}
            

@@ -26,9 +26,14 @@ def main():
       kustomization = yaml.load(file, Loader=yaml.FullLoader)
   
   if "master" in code_branch:
-    entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : "latest-prod"}
-    entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : "latest-prod"}
-
+    #done for trigger sync by argocd, since the tag-img is composed by sha of commit, that is 
+    #always different
+    if tier == "backend":
+      entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : image_tag}
+      entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : "latest-prod"}
+    else:
+      entryBackend = {"name" : imageNameBackend, "newName" : user_dockerhub+"/"+repo_name_backend_dockerhub, "newTag" : "latest-prod"}
+      entryFrontend = {"name" : imageNameFrontend, "newName" : user_dockerhub+"/"+repo_name_frontend_dockerhub, "newTag" : image_tag}
   else:
 
     if(tier == "backend"):

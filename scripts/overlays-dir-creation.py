@@ -24,6 +24,7 @@ def main():
   branch = os.environ["CODE_BRANCH"]
   tier = os.environ["TIER"]
   app_name = os.environ["APP_NAME"]
+  prod_input_master = os.environ["PROD_INPUT_MASTER"]
   list_branch = branch.split("/")
   
   create_basic_struct()
@@ -33,6 +34,8 @@ def main():
     final_folder = overlays_folder+"prod/"
     #create_specific_struct("prod", "kustomize/overlays", folder)
     if "prod" in os.listdir(overlays_folder):
+      if (prod_input_master == "backend" and tier == "frontend") or (prod_input_master == "frontend" and tier == "backend"):
+        return
       #delete path
       shutil.rmtree(final_folder, ignore_errors=True)
     #create path
