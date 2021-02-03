@@ -10,7 +10,7 @@ def main():
             sys.exit(k + " not present in config file, add it")
         else:
             print(config[k])
-    elif k == "prod_input_master":
+    elif k == "prod-input-master":
         if k not in config.keys():
             print("backend")
         else:

@@ -63,7 +63,7 @@ jobs:
         run: |
           echo "##[set-output name=app-name;]$(python scripts/create-outputs-from-config.py app-name)"
           echo "##[set-output name=argocd-repo;]$(python scripts/create-outputs-from-config.py argocd-repo)"
-          echo "##[set-output name=prod_input_master;]$(python scripts/create-outputs-from-config.py prod-input-master)"
+          echo "##[set-output name=prod-input-master;]$(python scripts/create-outputs-from-config.py prod-input-master)"
         id: from-config
         
       - name: set environment variables
