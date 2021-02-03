@@ -77,7 +77,7 @@ jobs:
           DOCKER_FRONTEND_REPO: ${{ github.event.inputs.docker-frontend-repo}}
           DOCKER_USER: ${{secrets.DOCKER_USERNAME}}
           APP_NAME: ${{steps.from-config.outputs.app-name}}
-          PROD_INPUT_MASTER: ${{steps.from-config.outputs.app-name}}
+          PROD_INPUT_MASTER: ${{steps.from-config.outputs.prod-input-master}}
       
       - name: Checkout code repo
         if: github.event.inputs.default-input-flag == 'false'
