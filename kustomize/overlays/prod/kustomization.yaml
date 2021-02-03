@@ -2,10 +2,10 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 images:
 - name: backend
   newName: mattedamo26/first-attempt-backend
-  newTag: cd0eda760d08b4f4373aca5417151ffc5d485eee-prod
+  newTag: latest-prod
 - name: frontend
   newName: mattedamo26/first-attempt-frontend
-  newTag: latest-prod
+  newTag: 28b5e33e8289db38db4c52c6deeb84a25a43b344-prod
 kind: Kustomization
 namespace: thesis-app-prod
 patches:
@@ -33,6 +33,6 @@ resources:
 - ../../base
 secretGenerator:
 - literals:
-  - MYSQL_ROOT_PASSWORD=default-password
-  - MYSQL_DATABASE=thesisAppMariadb
+  - MYSQL_ROOT_PASSWORD=password
+  - MYSQL_DATABASE=mybd
   name: db-db-dep
