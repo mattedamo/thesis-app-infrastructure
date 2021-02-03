@@ -1,4 +1,4 @@
-import yaml, os, shutil
+import yaml, os, shutil, sys
 def create_basic_struct():
   os.makedirs("kustomize/overlays/backend/releases/", exist_ok=True)
   os.makedirs("kustomize/overlays/backend/features/", exist_ok=True)
@@ -62,7 +62,7 @@ def main():
       #create path
       os.makedirs(final_folder, exist_ok= True)
     else:
-      raise Exception("Branch is not correct!")
+      sys.exit("Branch is not correct!")
 
   #create kustomization.yaml
   create_kustomization(branch, list_branch, final_folder, tier, app_name)
