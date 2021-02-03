@@ -7,7 +7,7 @@ def main():
   user_dockerhub = os.environ["DOCKER_USER"]  
   repo_name_frontend_dockerhub = os.environ["DOCKER_FRONTEND_REPO"]
   repo_name_backend_dockerhub = os.environ["DOCKER_BACKEND_REPO"]
-  image_tag = os.environ["DOCKER_TAG"]
+  image_tag = os.environ["DOCKER_IMAGE_TAG"]
 
   if "master" in code_branch:
     kustomization_path = "kustomize/overlays/prod/kustomization.yaml"
