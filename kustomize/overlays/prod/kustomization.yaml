@@ -5,7 +5,7 @@ images:
   newTag: latest-prod
 - name: frontend
   newName: mattedamo26/first-attempt-frontend
-  newTag: 424f337e48c4f2a476b6f075413eeaf0f01ffa32-prod
+  newTag: 354d9811e2fdfecb53cb7737ba981765d0a3b314-prod
 kind: Kustomization
 namespace: thesis-app-prod
 patches:
