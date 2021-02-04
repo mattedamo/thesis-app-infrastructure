@@ -33,6 +33,6 @@ resources:
 - ../../base
 secretGenerator:
 - literals:
-  - MYSQL_ROOT_PASSWORD=default-password
+  - MYSQL_ROOT_PASSWORD=password
   - MYSQL_DATABASE=thesisAppMariadb
   name: db-db-dep
