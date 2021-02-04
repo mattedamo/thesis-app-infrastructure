@@ -135,6 +135,8 @@ jobs:
   
       
       - name: Trigger infrastructure repo workflow
+        if: ${{ github.event.inputs.code-branch}} != 'master' || ( ${{steps.from-config.outputs.prod-input-master}} == 'backend' && ${{ github.event.inputs.tier}} == 'backend' )
+            || ( ${{steps.from-config.outputs.prod-input-master}} == 'frontend' && ${{ github.event.inputs.tier}} == 'frontend' )
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: update-manifest
