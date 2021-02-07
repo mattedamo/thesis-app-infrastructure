@@ -1,4 +1,4 @@
-### kustomize dir structure
+### kustomize dir structuree
 ```
 kustomize/ -> /base/ #basic yaml files
               /overlays ->  /prod
